@@ -1,7 +1,7 @@
 "use client";
 
 import type { Credential } from "./credential";
-import { getSubmissions, type SubmissionRecord } from "./history";
+import { getSubmissions } from "./history";
 import type { TimelineEvent } from "./useProofTimeline";
 
 export interface ProofHistoryEntry {

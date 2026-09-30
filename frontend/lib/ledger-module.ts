@@ -2,10 +2,9 @@
 
 import {
   ModuleInterface,
-  type ISupportedWallet,
   WalletNetwork,
 } from "@creit.tech/stellar-wallets-kit";
-import { StrKey, xdr } from "@stellar/stellar-sdk";
+
 import { NETWORK_PASSPHRASE } from "./stellar";
 
 export const LEDGER_ID = "ledger";

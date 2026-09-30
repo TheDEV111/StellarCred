@@ -75,6 +75,8 @@ export function getLedger(): ReturnType<typeof getLedgerModule> {
   return ledgerModule!;
 }
 
+export { getLedgerModule };
+
 export type WalletErrorKind = "not-installed" | "dismissed" | "rejected" | "timeout" | "unknown";
 
 export class WalletConnectError extends Error {

@@ -257,7 +257,7 @@ fn four_contract_lifecycle_end_to_end() {
 
     // 8. Revoke the claim (the issuing issuer, through ProofRegistry)
     //    → ClaimRevoked.
-    w.c.registry.revoke(&w.issuer, &holder, &symbol_short!("kyc"));
+    w.c.registry.revoke(&w.issuer, &holder, &symbol_short!("kyc"), &None);
     // Event assertion directly after the emitting call (see note above).
     assert_eq!(
         env.events().all().filter_by_contract(&w.c.registry.address),
