@@ -88,6 +88,7 @@ import { requireAuth } from "./auth";
 import { isIP } from "net";
 import { StrKey } from "@stellar/stellar-sdk";
 import { MAX_WEBHOOK_DELIVERY_ATTEMPTS } from "./webhooks";
+import { createGraphQLHandler } from "./graphql.js";
 
 const MAX_LIMIT = 100;
 const DEFAULT_LIMIT = 20;
@@ -250,9 +251,8 @@ export function buildApp(db: Db, ingester: Ingester, config?: Partial<Config>): 
   // Provides a flexible, typed query interface over the claims store.
   // Supports filtering by wallet, credential_type, issuer, active/revoked,
   // and time range, with cursor-based pagination.
-  const { createGraphQLHandler } = await import("./graphql");
   const graphqlHandler = createGraphQLHandler(db);
-  app.use("/graphql", graphqlHandler);
+  app.use("/graphql", graphqlHandler as any);
 
   // ── GET /health ──────────────────────────────────────────────────────────
   // Exposes ingester lag so operators can alert when the indexer falls behind.

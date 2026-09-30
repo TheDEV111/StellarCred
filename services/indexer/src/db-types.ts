@@ -105,7 +105,8 @@ export interface Db {
   /** Mark a claim as revoked. */
   revokeClaim(
     wallet: string,
-    credentialType: string
+    credentialType: string,
+    reasonCode?: string
   ): void | Promise<void>;
   /** Read a specific claim before applying a revocation event. */
   claimByWalletAndType(wallet: string, credentialType: string): ClaimRow | undefined | Promise<ClaimRow | undefined>;

@@ -106,7 +106,7 @@ export function createGraphQLSchema(db: Db) {
     typeDefs,
     resolvers: {
       Query: {
-        claims: async (_parent, args, _context) => {
+        claims: async (_parent: any, args: any, _context: any) => {
           const { filter, first = 20, after } = args;
           const limit = Math.min(Math.max(1, first), 100);
           const params: (string | number)[] = [];

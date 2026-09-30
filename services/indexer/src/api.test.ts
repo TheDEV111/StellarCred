@@ -611,6 +611,7 @@ describe("claim response schema", () => {
       ledger_sequence: 123456789,
       threshold: 50000,
       revoked: 0,
+      reason_code: "other",
     };
     const stringified = {
       ...numeric,
@@ -814,7 +815,7 @@ describe("GraphQL endpoint", () => {
 
   beforeEach(async () => {
     graphqlTmpFile = path.join(os.tmpdir(), `indexer-test-gql-${Date.now()}.db`);
-    graphqlDb = createSqliteDb({ dbPath: graphqlTmpFile } as Config);
+    graphqlDb = createSqliteDb({ dbPath: graphqlTmpFile } as unknown as Config);
     graphqlDb.migrate();
 
     const wallet1 = Keypair.random().publicKey();
