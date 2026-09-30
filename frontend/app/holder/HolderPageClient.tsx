@@ -17,6 +17,8 @@ import {
   IconCloudUpload,
   IconStack2,
   IconDownload,
+  IconFileDownload,
+  IconFileSpreadsheet,
 } from "@tabler/icons-react";
 import { WalletButton } from "@/components/WalletButton";
 import { useWallet } from "@/lib/wallet-context";
@@ -48,6 +50,7 @@ import {
   exportCredentials,
 } from "@/lib/credential";
 import { isStorageAvailable } from "@/lib/safe-storage";
+import { downloadHistoryJson, downloadHistoryCsv } from "@/lib/export-history";
 import { PREVIEW_CREDENTIALS } from "@/lib/preview-fixtures";
 import { usePreviewMode } from "@/lib/wallet-context";
 import CopyButton from "@/components/CopyButton";
@@ -1011,6 +1014,24 @@ function HolderInner() {
                 >
                   <IconDownload size={14} />
                   Export backup
+                </button>
+                <button
+                  className="btn btn-ghost btn-sm"
+                  onClick={() => downloadHistoryJson(creds)}
+                  disabled={creds.length === 0}
+                  title="Download proof history as JSON (non-sensitive fields only)"
+                >
+                  <IconFileDownload size={14} />
+                  Export history JSON
+                </button>
+                <button
+                  className="btn btn-ghost btn-sm"
+                  onClick={() => downloadHistoryCsv(creds)}
+                  disabled={creds.length === 0}
+                  title="Download proof history as CSV (non-sensitive fields only)"
+                >
+                  <IconFileSpreadsheet size={14} />
+                  Export history CSV
                 </button>
               </div>
               <p className="faint" style={{ fontSize: "0.75rem", maxWidth: 560, lineHeight: 1.6, margin: 0 }}>

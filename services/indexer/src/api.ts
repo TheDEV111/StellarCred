@@ -132,6 +132,8 @@ export interface SerializedClaim {
   threshold: number | null;
   /** 0 or 1 — see the module doc comment for why this isn't a boolean. */
   revoked: number;
+  /** Revocation reason code: expired, superseded, fraud, user_request, other */
+  reason_code: string;
 }
 
 export function serializeClaim(row: ClaimRow): SerializedClaim {
@@ -145,6 +147,7 @@ export function serializeClaim(row: ClaimRow): SerializedClaim {
     ledger_sequence: Number(row.ledger_sequence),
     threshold: row.threshold === null ? null : Number(row.threshold),
     revoked: Number(row.revoked),
+    reason_code: row.reason_code || "other",
   };
 }
 
@@ -242,6 +245,14 @@ export function buildApp(db: Db, ingester: Ingester, config?: Partial<Config>): 
     }
     guard(req, res, next);
   };
+
+  // ── GraphQL endpoint ─────────────────────────────────────────────────────
+  // Provides a flexible, typed query interface over the claims store.
+  // Supports filtering by wallet, credential_type, issuer, active/revoked,
+  // and time range, with cursor-based pagination.
+  const { createGraphQLHandler } = await import("./graphql");
+  const graphqlHandler = createGraphQLHandler(db);
+  app.use("/graphql", graphqlHandler);
 
   // ── GET /health ──────────────────────────────────────────────────────────
   // Exposes ingester lag so operators can alert when the indexer falls behind.

@@ -29,6 +29,8 @@ export interface ClaimInput {
   threshold: number | null;
   /** 1 if the issuer has revoked this proof, 0 otherwise */
   revoked: number;
+  /** Revocation reason code: expired, superseded, fraud, user_request, other */
+  reason_code: string;
 }
 
 /** A claim row as read back from the database (includes the `id` cursor). */
@@ -338,6 +340,7 @@ export function toClaimRow(row: Record<string, unknown>): ClaimRow {
     ledger_sequence: Number(row["ledger_sequence"]),
     threshold: row["threshold"] == null ? null : Number(row["threshold"]),
     revoked: Number(row["revoked"]),
+    reason_code: (row["reason_code"] as string) || "other",
   };
 }
 

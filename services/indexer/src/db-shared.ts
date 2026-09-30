@@ -118,15 +118,16 @@ export function createSharedDb(dialect: SqlDialect): Db {
       await dialect.run(
         `INSERT INTO claims
            (wallet, credential_type, issuer, verified_at, expiry,
-            ledger_sequence, threshold, revoked)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            ledger_sequence, threshold, revoked, reason_code)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
          ON CONFLICT(wallet, credential_type) DO UPDATE SET
            issuer          = ${ex}.issuer,
            verified_at     = ${ex}.verified_at,
            expiry          = ${ex}.expiry,
            ledger_sequence = ${ex}.ledger_sequence,
            threshold       = ${ex}.threshold,
-           revoked         = 0`,
+           revoked         = 0,
+           reason_code     = 'other'`,
         [
           row.wallet,
           row.credential_type,
@@ -136,15 +137,16 @@ export function createSharedDb(dialect: SqlDialect): Db {
           row.ledger_sequence,
           row.threshold ?? null,
           0,
+          "other",
         ],
       );
     },
 
-    async revokeClaim(wallet, credentialType) {
+    async revokeClaim(wallet, credentialType, reasonCode?: string) {
       await dialect.run(
-        `UPDATE claims SET revoked = 1
+        `UPDATE claims SET revoked = 1, reason_code = ?
          WHERE wallet = ? AND credential_type = ?`,
-        [wallet, credentialType],
+        [reasonCode || "other", wallet, credentialType],
       );
     },
 
