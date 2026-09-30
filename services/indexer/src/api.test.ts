@@ -953,7 +953,7 @@ describe("GraphQL endpoint", () => {
     expect(res.status).toBe(200);
     const claims = res.body.data.claims.edges;
     expect(claims).toHaveLength(2);
-    claims.forEach((c: any) => expect(c.revoked).toBe(false);
+    claims.forEach((c: any) => expect(c.revoked).toBe(false));
   });
 
   it("filters by revoked status", async () => {
