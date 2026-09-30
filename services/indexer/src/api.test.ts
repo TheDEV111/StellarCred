@@ -815,7 +815,7 @@ describe("GraphQL endpoint", () => {
 
   beforeEach(async () => {
     graphqlTmpFile = path.join(os.tmpdir(), `indexer-test-gql-${Date.now()}.db`);
-    graphqlDb = createSqliteDb({ dbPath: graphqlTmpFile } as unknown as Config);
+    graphqlDb = createSqliteDb({ sqlitePath: graphqlTmpFile } as unknown as Config);
     graphqlDb.migrate();
 
     const wallet1 = Keypair.random().publicKey();

@@ -106,31 +106,14 @@ export function createGraphQLSchema(db: Db) {
     typeDefs,
     resolvers: {
       Query: {
-        claims: async (_parent: any, args: any, _context: any) => {
+        claims: async (_parent: any, args: any, context: any) => {
           const { filter, first = 20, after } = args;
           const limit = Math.min(Math.max(1, first), 100);
-          const params: (string | number)[] = [];
-          const whereClause = buildWhereClause(filter, params);
+          const db = context.db as Db;
 
-          let cursorCondition = "";
-          if (after) {
-            const cursor = decodeCursor(after);
-            if (cursor) {
-              cursorCondition = whereClause
-                ? ` AND (ledger_sequence < ? OR (ledger_sequence = ? AND id < ?))`
-                : `WHERE (ledger_sequence < ? OR (ledger_sequence = ? AND id < ?))`;
-              params.push(cursor.ledgerSequence, cursor.ledgerSequence, cursor.id);
-            }
-          }
+          const result = await db.queryClaims(filter || {}, limit, after);
 
-          const sql = `SELECT * FROM claims ${whereClause}${cursorCondition} ORDER BY ledger_sequence DESC, id DESC LIMIT ?`;
-          params.push(limit + 1);
-
-          const rows = await (db as any).dialect.all(sql, params);
-          const hasNextPage = rows.length > limit;
-          const pageRows = hasNextPage ? rows.slice(0, limit) : rows;
-
-          const edges = pageRows.map((row: any) => {
+          const edges = result.rows.map((row: any) => {
             const claim = toClaimRow(row);
             return {
               ...claim,
@@ -142,16 +125,11 @@ export function createGraphQLSchema(db: Db) {
             };
           });
 
-          const lastRow = pageRows[pageRows.length - 1];
-          const endCursor = lastRow
-            ? encodeCursor(Number(lastRow.ledger_sequence), Number(lastRow.id))
-            : "";
-
           return {
             edges,
             pageInfo: {
-              hasNextPage,
-              endCursor,
+              hasNextPage: result.hasNextPage,
+              endCursor: result.endCursor,
             },
           };
         },

@@ -108,6 +108,25 @@ export interface Db {
     credentialType: string,
     reasonCode?: string
   ): void | Promise<void>;
+
+  /** Run a filtered, paginated claim query (used by the GraphQL endpoint). */
+  queryClaims(
+    filter: {
+      wallet?: string;
+      credentialType?: string;
+      issuer?: string;
+      active?: boolean;
+      revoked?: boolean;
+      verifiedAfter?: number;
+      verifiedBefore?: number;
+    },
+    limit: number,
+    after?: string
+  ): Promise<{
+    rows: ClaimRow[];
+    hasNextPage: boolean;
+    endCursor: string;
+  }>;
   /** Read a specific claim before applying a revocation event. */
   claimByWalletAndType(wallet: string, credentialType: string): ClaimRow | undefined | Promise<ClaimRow | undefined>;
 

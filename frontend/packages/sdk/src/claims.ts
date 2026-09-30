@@ -1105,7 +1105,7 @@ async function readRecord(
           ? Number(result.threshold)
           : undefined,
       vkVersion: Number(result.vk_version),
-      reason: reasonMap[Number(result.reason)] || "other",
+      reason: result.reason !== undefined ? reasonMap[Number(result.reason)] || "other" : undefined,
     };
   } catch (err) {
     if (throwOnError) {

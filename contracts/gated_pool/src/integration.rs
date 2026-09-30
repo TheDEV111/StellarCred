@@ -48,6 +48,7 @@ use credential_verifier::EventVkSet;
 use issuer_registry::{EventIssuerRegistered, EventIssuerRevoked};
 use proof_registry::{
     EventPaused, EventProofRevoked, EventProofSubmitted, EventUnpaused,
+    RevocationReason,
 };
 use soroban_sdk::{
     testutils::{Address as _, Events as _, Ledger as _},
@@ -275,6 +276,7 @@ fn four_contract_lifecycle_end_to_end() {
                     holder: holder.clone(),
                     issuer: w.issuer.clone(),
                     revoked_at: T0,
+                    reason: RevocationReason::Other,
                 }
                 .into_val(&env),
             ),

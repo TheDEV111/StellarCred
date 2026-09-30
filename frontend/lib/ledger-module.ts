@@ -2,9 +2,10 @@
 
 import {
   ModuleInterface,
+  ModuleType,
   WalletNetwork,
 } from "@creit.tech/stellar-wallets-kit";
-
+import { StrKey, xdr } from "@stellar/stellar-sdk";
 import { NETWORK_PASSPHRASE } from "./stellar";
 
 export const LEDGER_ID = "ledger";
@@ -18,7 +19,14 @@ export class LedgerModule implements ModuleInterface {
   icon = LEDGER_ICON;
   type = "hardware" as const;
   url = "https://www.ledger.com";
-  isPlatformWrapper = false;
+  async isPlatformWrapper(): Promise<boolean> {
+    return false;
+  }
+  moduleType = ModuleType.HW_WALLET;
+  productId = LEDGER_ID;
+  productName = LEDGER_NAME;
+  productUrl = "https://www.ledger.com";
+  productIcon = LEDGER_ICON;
 
   private transport: any = null;
   private strApp: any = null;
@@ -42,7 +50,6 @@ export class LedgerModule implements ModuleInterface {
   async getAddress(): Promise<{ address: string }> {
     await this.ensureConnection();
     try {
-      const { StrKey } = await import("@stellar/stellar-sdk");
       const path = "44'/148'/0'";
       const response = await this.strApp.getPublicKey(path, true, false);
       const rawPubKey = response.publicKey;
@@ -58,13 +65,13 @@ export class LedgerModule implements ModuleInterface {
   }
 
   async signTransaction(
-    xdr: string,
+    xdrString: string,
     opts: { address: string; networkPassphrase: string }
   ): Promise<{ signedTxXdr: string }> {
     await this.ensureConnection();
     try {
-      const { Transaction } = await import("@stellar/stellar-sdk");
-      const tx = new Transaction(xdr, opts.networkPassphrase);
+      const { Transaction, xdr } = await import("@stellar/stellar-sdk");
+      const tx = new Transaction(xdrString, opts.networkPassphrase);
       const path = "44'/148'/0'";
 
       const sig = await this.strApp.signTransaction(
@@ -78,11 +85,10 @@ export class LedgerModule implements ModuleInterface {
         "hex"
       ).slice(-4);
 
-      const decoratedSig = new xdr.DecoratedSignature({
+      const decoratedSig = {
         hint: xdr.Hint.fromXDR(hint),
         signature: xdr.Signature.fromXDR(signature),
-      });
-
+      } as unknown as xdr.DecoratedSignature;
       tx.signatures.push(decoratedSig);
       return { signedTxXdr: tx.toXDR() };
     } catch (e) {
@@ -92,8 +98,8 @@ export class LedgerModule implements ModuleInterface {
     }
   }
 
-  async getNetwork(): Promise<{ networkPassphrase: string }> {
-    return { networkPassphrase: NETWORK_PASSPHRASE };
+  async getNetwork(): Promise<{ network: string; networkPassphrase: string }> {
+    return { network: NETWORK_PASSPHRASE, networkPassphrase: NETWORK_PASSPHRASE };
   }
 
   private async ensureConnection(): Promise<void> {
@@ -103,7 +109,6 @@ export class LedgerModule implements ModuleInterface {
       const { default: TransportWebUSB } = await import(
         "@ledgerhq/hw-transport-webusb"
       );
-      const { StrKey } = await import("@stellar/stellar-sdk");
       const { default: StrApp } = await import("@ledgerhq/hw-app-str");
 
       this.transport = await TransportWebUSB.create();
@@ -125,6 +130,14 @@ export class LedgerModule implements ModuleInterface {
       this.transport = null;
       this.strApp = null;
     }
+  }
+
+  async signAuthEntry(): Promise<{ signedAuthEntry: string; signerAddress?: string }> {
+    throw new Error("Ledger does not support signAuthEntry");
+  }
+
+  async signMessage(): Promise<{ signedMessage: string; signerAddress?: string }> {
+    throw new Error("Ledger does not support signMessage");
   }
 }
 
