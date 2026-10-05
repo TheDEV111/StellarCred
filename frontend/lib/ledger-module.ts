@@ -7,6 +7,7 @@ import {
 } from "@creit.tech/stellar-wallets-kit";
 import { StrKey } from "@stellar/stellar-sdk";
 import { NETWORK_PASSPHRASE } from "./stellar";
+import { xdr, Transaction } from "@stellar/stellar-sdk";
 
 export const LEDGER_ID = "ledger";
 export const LEDGER_NAME = "Ledger";

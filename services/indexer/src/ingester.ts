@@ -860,3 +860,4 @@ export function createIngester(config: Config, db: Db): Ingester {
     },
   };
 }
+
