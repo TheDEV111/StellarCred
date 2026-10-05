@@ -561,6 +561,7 @@ describe("claim response schema", () => {
       expiry: "1999999999",
       ledger_sequence: "123456789",
       threshold: "50000",
+      reason_code: "other",
       revoked: 0,
     } as unknown as ClaimRow;
 

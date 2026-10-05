@@ -155,6 +155,7 @@ export interface SerializedClaim {
   ledger_sequence: number;
   threshold: number | null;
   /** 0 or 1 — see the module doc comment for why this isn't a boolean. */
+  reason_code: string;
   revoked: number;
   /** Derived, not event-sourced — see the module doc comment. */
   expired: boolean;
@@ -184,6 +185,7 @@ export function serializeClaim(
     expiry: Number(row.expiry),
     ledger_sequence: Number(row.ledger_sequence),
     threshold: row.threshold === null ? null : Number(row.threshold),
+    reason_code: row.reason_code,
     revoked: Number(row.revoked),
     expired: isExpired(row, now),
     state: claimState(row, now),
