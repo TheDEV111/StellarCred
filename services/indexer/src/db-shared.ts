@@ -141,8 +141,8 @@ export function createSharedDb(dialect: SqlDialect): Db {
            expiry          = ${ex}.expiry,
            ledger_sequence = ${ex}.ledger_sequence,
            threshold       = ${ex}.threshold,
-           revoked         = 0,
-           reason_code     = 'other'`,
+           revoked         = ${ex}.revoked,
+           reason_code     = ${ex}.reason_code`,
         [
           row.wallet,
           row.credential_type,
@@ -151,8 +151,8 @@ export function createSharedDb(dialect: SqlDialect): Db {
           row.expiry,
           row.ledger_sequence,
           row.threshold ?? null,
-          0,
-          "other",
+          row.revoked ?? 0,
+          row.reason_code ?? "other",
         ],
       );
     },
@@ -192,7 +192,7 @@ export function createSharedDb(dialect: SqlDialect): Db {
         params.push(filter.verifiedAfter);
       }
       if (filter.verifiedBefore !== undefined) {
-        conditions.push("verified_at <= ?");
+        conditions.push("verified_at < ?");
         params.push(filter.verifiedBefore);
       }
 

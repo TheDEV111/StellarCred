@@ -435,7 +435,7 @@ fn revoke_with_reason_codes_stores_and_emits_each_code() {
     let env = Env::default();
     env.mock_all_auths();
     let h = deploy(&env);
-    let holder = Address::generate(&env);
+    let _holder = Address::generate(&env);
 
     let reasons = [
         RevocationReason::Expired,
@@ -445,7 +445,7 @@ fn revoke_with_reason_codes_stores_and_emits_each_code() {
         RevocationReason::Other,
     ];
 
-    for (i, reason) in reasons.iter().enumerate() {
+    for reason in reasons.iter() {
         let holder_i = Address::generate(&env);
         submit(&env, &h, &holder_i, 9999);
 

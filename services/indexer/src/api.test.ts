@@ -77,7 +77,7 @@ function makeConfig(sqlitePath: string): Config {
 
 beforeEach(async () => {
   // Use a unique temp file per test so each test gets a fresh DB
-  tmpFile = path.join(os.tmpdir(), `indexer-test-${Date.now()}-${Math.random()}.db`);
+  tmpFile = path.join(os.tmpdir(), `indexer-test-${Date.now() + "-" + Math.random()}-${Math.random()}.db`);
   db = createSqliteDb(makeConfig(tmpFile));
   await db.migrate();
   app = buildApp(db, makeIngester());
@@ -569,6 +569,7 @@ describe("claim response schema", () => {
       verified_at: 1700000000,
       expiry: 1999999999,
       ledger_sequence: 123456789,
+      reason_code: "other",
       threshold: 50000,
       revoked: 0,
     });
@@ -609,9 +610,9 @@ describe("claim response schema", () => {
       verified_at: 1700000000,
       expiry: 1999999999,
       ledger_sequence: 123456789,
+      reason_code: "other",
       threshold: 50000,
       revoked: 0,
-      reason_code: "other",
     };
     const stringified = {
       ...numeric,
@@ -646,6 +647,8 @@ describe("claim response schema", () => {
       "verified_at",
       "expiry",
       "ledger_sequence",
+      "reason_code",
+      
       "threshold",
       "revoked",
     ].sort();
@@ -814,7 +817,7 @@ describe("GraphQL endpoint", () => {
   let graphqlTmpFile: string;
 
   beforeEach(async () => {
-    graphqlTmpFile = path.join(os.tmpdir(), `indexer-test-gql-${Date.now()}.db`);
+    graphqlTmpFile = path.join(os.tmpdir(), `indexer-test-gql-${Date.now() + "-" + Math.random()}.db`);
     graphqlDb = createSqliteDb({ sqlitePath: graphqlTmpFile } as unknown as Config);
     graphqlDb.migrate();
 

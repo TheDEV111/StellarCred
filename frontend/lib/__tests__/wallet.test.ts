@@ -34,7 +34,7 @@ vi.mock("@creit.tech/stellar-wallets-kit", () => {
       MockKit.lastInstance = this;
     }
   }
-  return {
+  return { ModuleType: { HW_WALLET: "HW_WALLET" },
     StellarWalletsKit: MockKit,
     WalletNetwork: { PUBLIC: "Public Global Stellar Network ; September 2015", TESTNET: "Test SDF Network ; September 2015" },
     allowAllModules: () => [{ id: "freighter" }, { id: "albedo" }] as unknown as ModuleInterface[],
@@ -286,12 +286,12 @@ describe("lib/wallet.ts getKit() WalletConnect module wiring", () => {
   it("registers a Ledger module", async () => {
     vi.resetModules();
     const { getKit } = await import("../wallet");
-    const { getLedgerModule, LEDGER_ID } = await import("../ledger-module");
+    const { LEDGER_ID } = await import("../ledger-module");
 
     const modules = (getKit() as unknown as MockKitInstance).modules;
-    const ledger = modules.find((m) => m.id === LEDGER_ID);
+    const ledger = modules.find((m) => m.productId === LEDGER_ID);
     expect(ledger).toBeDefined();
-    expect(ledger?.name).toBe("Ledger");
+    expect(ledger?.productName).toBe("Ledger");
   });
 
   it("Ledger module is available when WebUSB is supported", async () => {

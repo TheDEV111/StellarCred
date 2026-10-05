@@ -180,7 +180,7 @@ describe("shared query layer drives both backends identically", () => {
     });
     expect(postgres).toBe(sqlite);
     expect(sqlite).toContain("ON CONFLICT(wallet, credential_type) DO UPDATE SET");
-    expect(sqlite).toContain("revoked = 0");
+    expect(sqlite).toContain("revoked = excluded.revoked");
     expect(params).toEqual([
       "GALICE",
       "kyc",

@@ -5,7 +5,7 @@ import {
   ModuleType,
   WalletNetwork,
 } from "@creit.tech/stellar-wallets-kit";
-import { StrKey, xdr } from "@stellar/stellar-sdk";
+import { StrKey } from "@stellar/stellar-sdk";
 import { NETWORK_PASSPHRASE } from "./stellar";
 
 export const LEDGER_ID = "ledger";
@@ -70,7 +70,7 @@ export class LedgerModule implements ModuleInterface {
   ): Promise<{ signedTxXdr: string }> {
     await this.ensureConnection();
     try {
-      const { Transaction, xdr } = await import("@stellar/stellar-sdk");
+      const { Transaction } = await import("@stellar/stellar-sdk");
       const tx = new Transaction(xdrString, opts.networkPassphrase);
       const path = "44'/148'/0'";
 
@@ -80,15 +80,9 @@ export class LedgerModule implements ModuleInterface {
       );
 
       const signature = Buffer.from(sig.signature, "hex");
-      const hint = Buffer.from(
-        StrKey.decodeEd25519PublicKey(opts.address),
-        "hex"
-      ).slice(-4);
+      const hint = Buffer.from(StrKey.decodeEd25519PublicKey(opts.address)).subarray(-4);
 
-      const decoratedSig = {
-        hint: xdr.Hint.fromXDR(hint),
-        signature: xdr.Signature.fromXDR(signature),
-      } as unknown as xdr.DecoratedSignature;
+      const decoratedSig = new xdr.DecoratedSignature({ hint, signature });
       tx.signatures.push(decoratedSig);
       return { signedTxXdr: tx.toXDR() };
     } catch (e) {
